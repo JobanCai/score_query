@@ -82,7 +82,6 @@ def query_ntce(name: str, id_card: str, yzm: str, cookie_str: str):
     re = requests.post('http://search.neea.edu.cn/QueryMarkUpAction.do?act=doQueryNtceResultsList',
                        data, headers=headers)
     html_str = re.content.decode('utf-8')
-    print(html_str)
     return parse(html_str)
 
 
@@ -109,7 +108,7 @@ def parse(html_str: str):
                     '有效期限': tds[5].contents[0],
                     '考试省份': tds[6].contents[0],
                 })
-        result['笔试'] = data_list
+        result['written_test'] = data_list
         data_list = []
         for idx, tr in enumerate(soup.select(".odere tr")):  # 笔试成绩
             if idx != 0:
@@ -121,8 +120,8 @@ def parse(html_str: str):
                     '考试批次': tds[3].contents[0],
                     '考试省份': tds[4].contents[0],
                 })
-        result['面试'] = data_list
-    print(result)
+        result['interview'] = data_list
+    return result
 
 if __name__ == '__main__':
     get_yzm()

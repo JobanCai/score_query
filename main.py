@@ -20,6 +20,7 @@ Pool = redis.ConnectionPool(host="127.0.0.1", port=6379, db=9, password='12345',
 class Param(BaseModel):
     name: str
     id_card: str
+    yzm: str
     sign: str
 
 
@@ -30,12 +31,12 @@ def yzm():
 
 
 @app.post("/ntce/query")
-def query(param: Param, cookie_str: Optional[str] = Header('cookie_str')):
-    print(cookie_str)
+def query(param: Param, cookie_str: Optional[str] = Header('cookie_str', convert_underscores=False)):
     id_card = param.id_card
     name = param.name
     sign = param.sign
-    param_str = id_card + '&' + name + '&' + key
+    yzm = param.yzm
+    param_str = id_card + '&' + name + '&' + yzm + '&' + key
     hash = hashlib.md5(param_str.encode(encoding='UTF-8')).hexdigest()
     result = {}
     if hash != sign:
@@ -43,10 +44,10 @@ def query(param: Param, cookie_str: Optional[str] = Header('cookie_str')):
         result['isOk'] = 'N'
         return result
     else:
+        data = ntce.query_ntce(name, id_card, yzm, cookie_str)
         result = {
             'isOk': 'Y',
-            'param_str': param_str,
-            'hash': hash
+            'data': data
         }
     return result
 
