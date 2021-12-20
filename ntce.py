@@ -91,7 +91,7 @@ def query_ntce(name: str, id_card: str, yzm: str, cookie_str: str):
 def parse(html_str: str):
     result = {}
     data_list = []
-    soup = BeautifulSoup(html_str, 'lxml')
+    soup = BeautifulSoup(html_str, 'html.parser')
     if soup.select(".oder tr") is None:
         result['isOk'] = 'N'
     else:
